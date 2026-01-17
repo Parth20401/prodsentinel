@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request, HTTPException
 import httpx
 import asyncio
-from common.logging import setup_logging
-from common.tracing import setup_tracing
-from common.middleware import request_context_middleware
-from common.telemetry_sender import send_log_to_prodsentinel
+from app.common.logging import setup_logging
+from app.common.tracing import setup_tracing
+from app.common.middleware import request_context_middleware
+from app.common.telemetry_sender import send_log_to_prodsentinel
 
 PAYMENT_URL = "http://localhost:8001"
 SERVICE_NAME = "api-gateway"

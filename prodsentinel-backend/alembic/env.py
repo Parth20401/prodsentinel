@@ -54,11 +54,19 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    # Use environment variable if available
     import os
     db_url = os.getenv("DATABASE_URL")
     if db_url:
+        # Sanitize: Remove sslmode parameter as asyncpg doesn't support it
+        if "sslmode=" in db_url:
+            from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
+            u = urlparse(db_url)
+            query = parse_qs(u.query)
+            query.pop("sslmode", None)
+            db_url = urlunparse(u._replace(query=urlencode(query, doseq=True)))
+        
         config.set_main_option("sqlalchemy.url", db_url)
+
 
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section),

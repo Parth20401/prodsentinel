@@ -4,7 +4,7 @@ from app.common.logging import setup_logging
 from app.common.tracing import setup_tracing
 from app.common.middleware import request_context_middleware
 from app.common.telemetry_sender import send_log_to_prodsentinel
-from service import authorize_payment
+from .service import authorize_payment
 
 app = FastAPI()
 app.middleware("http")(request_context_middleware)

@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+httpx
+structlog
+opentelemetry-api
+opentelemetry-sdk

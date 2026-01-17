@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose.yml
+Dockerfile*
+.dockerignore
+
+# Agent / IDE
+.agent/
+.vscode/
+.idea/
+.env
+
+# Dependencies / Virtual Envs
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/venv/
+**/.venv/
+**/env/
+**/.cache/
+
+# Data
+**/*.log
+**/*.sqlite3
+
+
+# Frontend (Not needed for Backend Container)
+prodsentinel-frontend/
+node_modules/
+dist/

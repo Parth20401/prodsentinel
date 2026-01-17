@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+
+:root {
+  /* =========================================
+     Color Palette: Modern Enterprise Dark
+     ========================================= */
+
+  /* Backgrounds */
+  --bg-deep: #0a0e17;
+  /* Main app background (Slate-950 approx) */
+  --bg-panel: rgba(20, 25, 35, 0.6);
+  --bg-panel-hover: rgba(30, 35, 45, 0.7);
+
+  /* Accents */
+  --accent-primary: #6366f1;
+  /* Indigo-500 */
+  --accent-primary-glow: rgba(99, 102, 241, 0.3);
+
+  /* Semantic Status Colors */
+  --status-success: #10b981;
+  /* Emerald-500 */
+  --status-warning: #f59e0b;
+  /* Amber-500 */
+  --status-error: #ef4444;
+  /* Red-500 */
+  --status-neutral: #64748b;
+  /* Slate-500 */
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(255, 255, 255, 0.15);
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: #e2e8f0;
+  /* Slate-200 */
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  overflow: hidden;
+  /* App-like feel */
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================
+   Utility Classes (Custom)
+   ========================================= */
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Neon/Glow Effects (Subtle) */
+.glow-text-primary {
+  text-shadow: 0 0 20px var(--accent-primary-glow);
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scanline Effect (Optional, use sparingly) */
+.scanline::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.2));
+  background-size: 100% 4px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.1;
+}

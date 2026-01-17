@@ -1,0 +1,102 @@
+services:
+  # -------------------------------------------------------------------------
+  # INFRASTRUCTURE
+  # -------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: prodsentinel-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: prodsentinel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d prodsentinel"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: prodsentinel-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------------------
+  # BACKEND SERVICES
+  # -------------------------------------------------------------------------
+  backend:
+    build: 
+      context: ./prodsentinel-backend
+    container_name: prodsentinel-backend
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://user:password@postgres:5432/prodsentinel
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  pipeline-worker:
+    build:
+      context: ./prodsentinel-pipeline
+    container_name: prodsentinel-pipeline-worker
+    command: celery -A app.celery_app worker --loglevel=info
+    environment:
+      DATABASE_URL: postgresql+asyncpg://user:password@postgres:5432/prodsentinel
+      REDIS_URL: redis://redis:6379/0
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY} # Needs to be set in host environment
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  # -------------------------------------------------------------------------
+  # FAKE SERVICES (Traffic Generators)
+  # -------------------------------------------------------------------------
+  fake-gateway:
+    build:
+      context: ./prodsentinel-fake-services
+    container_name: prodsentinel-fake-gateway
+    command: uvicorn app.api-gateway.main:app --host 0.0.0.0 --port 8003
+    ports:
+      - "8003:8003"
+    environment:
+      PRODSENTINEL_URL: http://backend:8000
+
+  fake-payment:
+    build:
+      context: ./prodsentinel-fake-services
+    container_name: prodsentinel-fake-payment
+    command: uvicorn app.payment-service.main:app --host 0.0.0.0 --port 8004
+    ports:
+      - "8004:8004"
+    environment:
+      PRODSENTINEL_URL: http://backend:8000
+
+  fake-inventory:
+    build:
+      context: ./prodsentinel-fake-services
+    container_name: prodsentinel-fake-inventory
+    command: uvicorn app.inventory-service.main:app --host 0.0.0.0 --port 8002
+    ports:
+      - "8002:8002"
+    environment:
+      PRODSENTINEL_URL: http://backend:8000
+
+volumes:
+  postgres_data:

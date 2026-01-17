@@ -1,0 +1,28 @@
+# Python / General
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv/
+env/
+venv/
+*.log
+.DS_Store
+.cache/
+**/.cache/
+
+
+# IDEs
+.vscode/
+.idea/
+.agent/
+
+# Docker
+.docker_data/
+coverage.xml
+
+# Node/Frontend
+node_modules/
+dist/
+prodsentinel-frontend/.env.local

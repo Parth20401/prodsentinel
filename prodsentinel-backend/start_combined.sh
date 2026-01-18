@@ -13,23 +13,24 @@ echo "Starting Celery Worker..."
 cd /app/prodsentinel-pipeline
 PYTHONPATH=. celery -A app.celery_app worker --loglevel=error --concurrency=1 &
 
-# 3. Start Fake Services (Optimized - Sequential or Minimal)
+# 3. Start Fake Services (Sequential + Slow Start)
+# We sleep significantly to allow memory to stabilize between spawns
 echo "Starting Fake Services..."
 cd /app/prodsentinel-fake-services
 export PRODSENTINEL_URL=http://localhost:8000 
-# Running only API Gateway as entry point to save memory, 
-# relying on direct service calls or just one background worker if essential.
-# For now, let's run them all but with workers=1 and limited backlog if possible inside uvicorn defaults.
-# We will sleep briefly between starts to avoid CPU spike OOM.
-PYTHONPATH=. uvicorn app.api-gateway.main:app --port 8003 --workers 1 --loop asyncio &
-sleep 2
-PYTHONPATH=. uvicorn app.payment-service.main:app --port 8004 --workers 1 --loop asyncio &
-sleep 2
-PYTHONPATH=. uvicorn app.inventory-service.main:app --port 8002 --workers 1 --loop asyncio &
-sleep 2
 
-# 4. Start Backend API (Foreground)
+PYTHONPATH=. uvicorn app.api-gateway.main:app --port 8003 --workers 1 --loop asyncio &
+sleep 5
+
+PYTHONPATH=. uvicorn app.payment-service.main:app --port 8004 --workers 1 --loop asyncio &
+sleep 5
+
+PYTHONPATH=. uvicorn app.inventory-service.main:app --port 8002 --workers 1 --loop asyncio &
+sleep 5
+
+# 4. Start Backend API (Foreground - Must be last)
 echo "Starting Backend API..."
 cd /app/prodsentinel-backend
-PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+# Use exec to replace the shell process with uvicorn, saving a tiny bit of RAM (approx 1-2MB)
+exec PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
 

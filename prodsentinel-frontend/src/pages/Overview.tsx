@@ -1,4 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { getIncidents } from '@/services/api';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { RecentActivity } from '@/components/ui/RecentActivity';
@@ -23,6 +26,21 @@ export const Overview = () => {
         queryKey: ['incidents', 'overview'],
         queryFn: () => getIncidents(1, 100) // Get last 100 for stats
     });
+
+    const { data: signalsData } = useQuery({
+        queryKey: ['raw_signals', 'status'],
+        queryFn: async () => {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const res = await axios.get(`${API_URL}/query/signals?limit=1`);
+            return res.data;
+        },
+        refetchInterval: 10000 // Poll every 10s for status
+    });
+
+    const lastSignal = signalsData?.items?.[0];
+    const lastSignalTime = lastSignal ? new Date(lastSignal.timestamp) : null;
+    const isSystemLive = lastSignalTime && (new Date().getTime() - lastSignalTime.getTime()) < 60000;
+
 
     // Mock stats if loading or empty, otherwise calculate
     const stats = {
@@ -72,9 +90,25 @@ export const Overview = () => {
                     <Activity className="text-indigo-400" />
                     System Overview
                 </h1>
-                <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">System Healthy</span>
+                <div className="flex items-center gap-3">
+                    <div className={cn(
+                        "flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all",
+                        isSystemLive
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+                            : "bg-slate-500/10 border-slate-500/20 text-slate-400"
+                    )}>
+                        <div className={cn(
+                            "h-1.5 w-1.5 rounded-full animate-pulse",
+                            isSystemLive ? "bg-emerald-500" : "bg-slate-500"
+                        )} />
+                        {isSystemLive ? 'Live Connection' : 'System Standby'}
+                    </div>
+
+                    {lastSignalTime && (
+                        <span className="text-[10px] text-slate-500 font-medium">
+                            Last Signal: {formatDistanceToNow(lastSignalTime, { addSuffix: true })}
+                        </span>
+                    )}
                 </div>
             </header>
 

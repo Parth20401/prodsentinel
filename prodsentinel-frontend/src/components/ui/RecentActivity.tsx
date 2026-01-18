@@ -4,7 +4,7 @@ import { Activity, Terminal, Database, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 interface RawSignal {
     id: string;

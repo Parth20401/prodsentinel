@@ -8,7 +8,8 @@ import { Link } from 'react-router-dom';
 export const IncidentList = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['incidents'],
-        queryFn: () => getIncidents()
+        queryFn: () => getIncidents(),
+        refetchInterval: 3000, // Poll every 3s to see new incidents immediately
     });
 
     return (

@@ -7,7 +7,13 @@ import { Layout, Activity, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React from 'react';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Prevent reload when switching tabs
+    },
+  },
+});
 
 // Sidebar Link Component
 const NavItem = ({ to, icon: Icon, children }: { to: string, icon: any, children: React.ReactNode }) => {

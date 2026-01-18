@@ -27,7 +27,7 @@ export const IncidentList = () => {
                         <div className="p-1.5 bg-red-500/10 rounded-lg text-red-500"><AlertCircle size={16} /></div>
                         <div>
                             <p className="text-xs text-slate-400">Open</p>
-                            <p className="text-lg font-mono leading-none">3</p>
+                            <p className="text-lg font-mono leading-none">{data?.total ?? (isLoading ? '...' : '0')}</p>
                         </div>
                     </GlassPanel>
                 </div>

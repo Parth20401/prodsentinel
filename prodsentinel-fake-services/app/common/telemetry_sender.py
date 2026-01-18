@@ -5,7 +5,11 @@ import httpx
 import asyncio
 from datetime import datetime, timezone
 from uuid import uuid4
+from dotenv import load_dotenv
 import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 PRODSENTINEL_URL = os.getenv("PRODSENTINEL_URL", "http://localhost:8000")
 

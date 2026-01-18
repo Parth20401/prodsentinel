@@ -3,21 +3,10 @@ echo ===================================================
 echo   ProdSentinel - Local Agent Runner (Hybrid Mode)
 echo ===================================================
 echo.
-echo This script runs the "Fake Services" locally, but sends 
-echo telemetry to your CLOUD backend.
+echo This script runs the "Fake Services" locally.
+echo It will pick up PRODSENTINEL_URL from .env
 echo.
 
-REM Ask for the Cloud URL
-set /p BACKEND_URL="Enter your Render Backend URL (e.g. https://xyz.onrender.com): "
-
-REM Remove trailing slash if present
-if "%BACKEND_URL:~-1%"=="/" set "BACKEND_URL=%BACKEND_URL:~0,-1%"
-
-echo.
-echo Pointing Agents to: %BACKEND_URL%
-echo.
-
-set PRODSENTINEL_URL=%BACKEND_URL%
 set PYTHONPATH=.
 
 echo [1/3] Starting Inventory Service (Port 8002)...
@@ -38,7 +27,5 @@ echo ===================================================
 echo.
 echo To generate traffic, open a new terminal and run:
 echo curl -X POST http://localhost:8003/checkout/order-123
-echo.
-echo Or use the verification scripts.
 echo.
 pause

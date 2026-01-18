@@ -8,7 +8,19 @@ logger = get_logger(__name__)
 
 logger.info("Initializing database engine")
 
-engine = create_async_engine(settings.DATABASE_URL, echo=False)
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=False,
+    pool_pre_ping=True,
+    pool_recycle=300,
+    connect_args={
+        "timeout": 60,
+        "command_timeout": 60,
+        "server_settings": {
+            "application_name": "prodsentinel-backend"
+        }
+    }
+)
 
 AsyncSessionLocal = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False

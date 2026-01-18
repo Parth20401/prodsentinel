@@ -11,7 +11,18 @@ from sqlalchemy.pool import NullPool
 def get_engine():
     """Create a new async engine instance."""
     # Use NullPool for Celery workers to prevent connection holding across loops
-    return create_async_engine(settings.DATABASE_URL, echo=False, poolclass=NullPool)
+    return create_async_engine(
+        settings.DATABASE_URL, 
+        echo=False, 
+        poolclass=NullPool,
+        connect_args={
+            "timeout": 60, 
+            "command_timeout": 60,
+            "server_settings": {
+                "application_name": "prodsentinel-pipeline"
+            }
+        }
+    )
 
 def get_session_factory(engine):
     """Create a session factory for the given engine."""

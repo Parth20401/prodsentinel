@@ -1,7 +1,9 @@
 celery==5.4.0
 redis==5.2.1
-pyautogen==0.4.0
+pyautogen[gemini]==0.4.0
 google-generativeai==0.8.3
+google-cloud-aiplatform
+
 sqlalchemy==2.0.45
 asyncpg==0.31.0
 fastapi==0.127.0

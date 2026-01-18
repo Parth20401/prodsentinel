@@ -32,5 +32,6 @@ sleep 5
 echo "Starting Backend API..."
 cd /app/prodsentinel-backend
 # Use exec to replace the shell process with uvicorn, saving a tiny bit of RAM (approx 1-2MB)
-exec PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+export PYTHONPATH=.
+exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
 

@@ -41,7 +41,7 @@ async def send_log_to_prodsentinel(
             response = await client.post(
                 f"{PRODSENTINEL_URL}/ingest/logs",
                 json=payload,
-                timeout=2.0  # Increased timeout for debugging
+                timeout=10.0  # Increased timeout for cloud backend latency
             )
             response.raise_for_status()
             print(f"[TELEMETRY] Sent log to backend: {service_name} - {message}")

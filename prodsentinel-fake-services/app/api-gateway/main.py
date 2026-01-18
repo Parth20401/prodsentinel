@@ -6,7 +6,7 @@ from app.common.tracing import setup_tracing
 from app.common.middleware import request_context_middleware
 from app.common.telemetry_sender import send_log_to_prodsentinel
 
-PAYMENT_URL = "http://localhost:8001"
+PAYMENT_URL = "http://localhost:8004"
 SERVICE_NAME = "api-gateway"
 
 app = FastAPI()

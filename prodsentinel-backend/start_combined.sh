@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export C_FORCE_ROOT=true
 
 # 1. Run migrations for Backend
 echo "Running migrations..."

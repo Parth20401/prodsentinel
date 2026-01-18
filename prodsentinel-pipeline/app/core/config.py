@@ -9,6 +9,13 @@ class Settings(BaseSettings):
     # Redis (Broker)
     REDIS_URL: str = "redis://localhost:6379/0"
     
+    @field_validator("REDIS_URL", mode="after")
+    @classmethod
+    def sanitize_redis_url(cls, v: str) -> str:
+        if v and "ssl_cert_reqs=CERT_NONE" in v:
+            return v.replace("ssl_cert_reqs=CERT_NONE", "ssl_cert_reqs=none")
+        return v
+    
     # Postgres (Backend for Results)
     DATABASE_URL: str = "postgresql+asyncpg://prodsentinel:prodsentinel@localhost:5432/prodsentinel"
     
